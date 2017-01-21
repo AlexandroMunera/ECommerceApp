@@ -7,7 +7,8 @@
     <pages:MenuPage></pages:MenuPage>
   </MasterDetailPage.Master>
   <MasterDetailPage.Detail>
-    <NavigationPage x:Name="Navigator">
+    <NavigationPage x:Name="Navigator"
+                    BarBackgroundColor="{StaticResource MainColor}">
       <x:Arguments>
         <pages:UserPage></pages:UserPage>
       </x:Arguments>

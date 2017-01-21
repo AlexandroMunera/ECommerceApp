@@ -8,18 +8,11 @@ using Xamarin.Forms;
 
 namespace ECommerceApp.Pages
 {
-    public partial class MasterPage : MasterDetailPage
+    public partial class ProducsPage : ContentPage
     {
-        public MasterPage()
+        public ProducsPage()
         {
             InitializeComponent();
         }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            App.Navigator = Navigator;
-        }
-
     }
 }
