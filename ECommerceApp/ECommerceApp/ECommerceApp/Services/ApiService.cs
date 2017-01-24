@@ -1,7 +1,9 @@
 ﻿using ECommerceApp.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -47,6 +49,32 @@ namespace ECommerceApp.Services
                     IsSuccess = false,
                     Message = ex.Message                
                 };
+            }
+        }
+
+        public async Task<List<Product>> GetProducts()
+        {
+            try
+            {
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("Http://zulu-software.com");
+                var url = "/ECommerce/api/Products";
+                var response = await client.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                var result = await response.Content.ReadAsStringAsync();
+                var products = JsonConvert.DeserializeObject<List<Product>>(result);
+
+                return products.OrderBy(p => p.Description).ToList();
+            
+            }
+            catch
+            {
+                return null;
             }
         }
     }

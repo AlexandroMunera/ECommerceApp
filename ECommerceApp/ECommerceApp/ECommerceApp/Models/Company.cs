@@ -15,7 +15,7 @@ namespace ECommerceApp.Models
 
         public string Address { get; set; }
 
-        public string Logo { get; set; }        
+        public string Logo { get; set; }
 
         public int DepartmentId { get; set; }
 
@@ -24,9 +24,16 @@ namespace ECommerceApp.Models
         [OneToMany(CascadeOperations = CascadeOperation.All)]
         public List<User> Users { get; set; }
 
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+        public List<Product> Products { get; set; }
+
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+        public List<CompanyCustomer> CompanyCustomers { get; set; }
+
         public override int GetHashCode()
         {
             return CompanyId;
         }
     }
+
 }

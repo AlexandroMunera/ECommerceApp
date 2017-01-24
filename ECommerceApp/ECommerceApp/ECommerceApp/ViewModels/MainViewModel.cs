@@ -1,52 +1,123 @@
-﻿using ECommerceApp.Services;
-using System;
+﻿using ECommerceApp.Models;
+using ECommerceApp.Services;
+using GalaSoft.MvvmLight.Command;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
+using System;
 
 namespace ECommerceApp.ViewModels
 {
     public class MainViewModel
     {
+        #region Singleton
+
+        static MainViewModel instance;
+
+        public static MainViewModel GetInstance()
+        {
+            if (instance == null)
+            {
+                instance = new MainViewModel();
+            }
+
+            return instance;
+        }
+
+        #endregion
+
         #region Attributes
 
-        public DataService dataService;
+        private DataService dataService;
+
+        private ApiService apiService;
+
+        private NetServices netService;
 
         #endregion
 
         #region Properties
         public ObservableCollection<MenuItemViewModel> Menu { get; set; }
 
+        public ObservableCollection<ProductItemViewModel> Products { get; set; }
+
+
         public LoginViewModel NewLogin { get; set; }
 
         public UserViewModel UserLoged { get; set; }
+
+        public string Filter { get; set; }
         #endregion
 
         #region Constructors
         public MainViewModel()
         {
+            //Singleton
+            instance = this; 
+
+            //Create observable collections
             Menu = new ObservableCollection<MenuItemViewModel>();
+            Products = new ObservableCollection<ProductItemViewModel>();
+
+            //Create views
             NewLogin = new LoginViewModel();
             UserLoged = new UserViewModel();
 
+            //Instance services
             dataService = new DataService();
+            apiService = new ApiService();
+            netService = new NetServices();
 
+            //Load data
             LoadMenu();
-            LoadUser();
+            LoadProducts();
+            
         }
 
 
         #endregion
 
+        #region Commands
+
+        public ICommand SearchProductCommand { get { return new RelayCommand(SearchProduct); } }
+
+        private void SearchProduct()
+        {
+            var products = dataService.GetProducts(Filter);
+                       
+            Products.Clear();
+            foreach (var product in products)
+            {
+                Products.Add(new ProductItemViewModel
+                {
+                    BarCode = product.BarCode,
+                    Category = product.Category,
+                    CategoryId = product.CategoryId,
+                    Company = product.Company,
+                    CompanyId = product.CompanyId,
+                    Description = product.Description,
+                    Image = product.Image,
+                    Inventories = product.Inventories,
+                    Price = product.Price,
+                    ProductId = product.ProductId,
+                    Remarks = product.Remarks,
+                    Stock = product.Stock,
+                    Tax = product.Tax,
+                    TaxId = product.TaxId,
+                });
+            }
+
+        }
+
+        #endregion
+
         #region Methods
 
-        private void LoadUser()
+        public void LoadUser(User user)
         {
-            var user  = dataService.GetUser();
-            UserLoged.FullName = user.FullName;
-            UserLoged.Photo = user.PhotoFullPath;
+                UserLoged.FullName = user.FullName;
+                UserLoged.Photo = user.PhotoFullPath;
+            
         }
 
         private void LoadMenu()
@@ -99,7 +170,46 @@ namespace ECommerceApp.ViewModels
                 PageName = "LogutPage",
                 Title = "Cerrar Sesion"
             });
-        } 
+        }
+
+        private async void LoadProducts()
+        {
+            var products = new List<Product>();
+
+            if (netService.IsConnected())
+            {
+                products = await apiService.GetProducts();
+                dataService.SaveProducts(products);
+            }
+            else
+            {
+                products = dataService.GetProducts();
+            }
+
+            Products.Clear();
+
+            foreach (var p in products)
+            {
+                Products.Add(new ProductItemViewModel
+                {
+                    BarCode = p.BarCode,
+                    Category = p.Category,
+                    CategoryId = p.CategoryId,
+                    Company = p.Company,
+                    CompanyId = p.CompanyId,
+                    Description = p.Description,
+                    Image = p.Image,
+                    Inventories = p.Inventories,
+                    Price = p.Price,
+                    ProductId = p.ProductId,
+                    Remarks = p.Remarks,
+                    Stock = p.Stock,
+                    Tax = p.Tax,
+                    TaxId = p.TaxId
+                });
+            }
+        }
+
         #endregion
     }
 

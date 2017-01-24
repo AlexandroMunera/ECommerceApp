@@ -19,7 +19,19 @@ namespace ECommerceApp.Data
             var config = DependencyService.Get<IConfig>();
             connection = new SQLiteConnection(config.Platform,
                 System.IO.Path.Combine(config.DirectoryDB, "ECommerce.db3"));
+
+            connection.CreateTable<Category>();
             connection.CreateTable<Company>();
+            connection.CreateTable<City>();
+            connection.CreateTable<Company>();
+            connection.CreateTable<CompanyCustomer>();
+            connection.CreateTable<Customer>();
+            connection.CreateTable<Department>();
+            connection.CreateTable<Inventory>();
+            connection.CreateTable<Order>();
+            connection.CreateTable<Product>();
+            connection.CreateTable<Sale>();
+            connection.CreateTable<Tax>();
             connection.CreateTable<User>();
         }
 

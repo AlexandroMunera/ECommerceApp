@@ -1,6 +1,8 @@
 ﻿using ECommerceApp.Data;
 using ECommerceApp.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ECommerceApp.Services
 {
@@ -73,5 +75,83 @@ namespace ECommerceApp.Services
             }
         }
 
+        public void SaveProducts(List<Product> products)
+        {
+            using(var da = new DataAccess())
+            {
+                var oldProducts = da.GetList<Product>(false);
+
+                foreach (var p in oldProducts)
+                {
+                    da.Delete(p);
+                }
+
+                foreach (var product in products)
+                {
+                    da.Insert(product);
+                }
+            }
+        }
+
+        public List<Product> GetProducts(string filter)
+        {
+            using (var da = new DataAccess())
+            {
+                return da.GetList<Product>(true).OrderBy(p => p.Description).Where(p => p.Description.ToUpper().Contains(filter.ToUpper())).ToList();
+            }
+        }
+
+        public List<Product> GetProducts()
+        {
+            using(var da = new DataAccess())
+            {
+                return da.GetList<Product>(true).OrderBy(p => p.Description).ToList();
+            }
+        }
+
+        public Response Login(string email, string password)
+        {
+            try
+            {
+                using(var da = new DataAccess())
+                {
+                    var user = da.First<User>(true);
+                    if (user == null)
+                    {
+                        return new Response
+                        {
+                            IsSuccess = false,
+                            Message = "No hay conexión y no hay un usuario previamente registrado."
+                        };
+                    }
+
+                    if (user.UserName.ToUpper() == email.ToUpper() && user.Password == password)
+                    {
+                        return new Response
+                        {
+                            IsSuccess = true,
+                            Message = "ok",
+                            Result = user
+
+                        };
+                    }
+
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = "Usuario o contraseña incorrecto"
+                    };
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = ex.Message
+                };
+            }
+        }
     }
 }
