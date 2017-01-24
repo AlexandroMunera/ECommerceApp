@@ -1,11 +1,14 @@
 ﻿using ECommerceApp.Pages;
 using System.Threading.Tasks;
 using System;
+using ECommerceApp.Models;
 
 namespace ECommerceApp.Services
 {
     public class NavigationService
     {
+        private DataService dataService;
+
         public async Task Navigate(string pageName)
         {
             App.Master.IsPresented = false; //Cerrar el menu cuando elija un item
@@ -33,13 +36,36 @@ namespace ECommerceApp.Services
                 case "UserPage":
                     await App.Navigator.PushAsync(new UserPage());
                     break;
+                case "LogutPage":
+                    LogOut();
+                    break;
                 default:
                     break;
             }
         }
 
-        internal void SetMainPage()
+        internal User GetCurrentUser()
         {
+            return App.CurrentUser;
+        }
+
+        public NavigationService()
+        {
+            dataService = new DataService();
+        }
+
+
+        private void LogOut()
+        {
+            App.CurrentUser.IsRemembered = false;
+            dataService.UpdateUser(App.CurrentUser);
+
+            App.Current.MainPage = new LoginPage();
+        }
+
+        internal void SetMainPage(User user)
+        {
+            App.CurrentUser = user;
             App.Current.MainPage = new MasterPage();
         }
     }

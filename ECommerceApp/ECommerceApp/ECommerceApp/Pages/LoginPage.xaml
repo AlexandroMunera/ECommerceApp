@@ -31,6 +31,7 @@
 
     <Entry
       Text="{Binding User, Mode=TwoWay}"
+      Keyboard="Email"
       Placeholder="Usuario"
       TextColor="{StaticResource MainColor}">      
     </Entry>
@@ -46,7 +47,8 @@
       TextColor="{StaticResource AccentColor}"
       HorizontalOptions="Center"
       VerticalOptions="Center">
-    </Button>    
+    </Button>
+    <ActivityIndicator IsRunning="{Binding IsRunning}"></ActivityIndicator>
     <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
       <Label Text="Recuerdame"
              TextColor="{StaticResource MainColor}"

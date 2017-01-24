@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ECommerceApp.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,10 +10,18 @@ namespace ECommerceApp.ViewModels
 {
     public class MainViewModel
     {
+        #region Attributes
+
+        public DataService dataService;
+
+        #endregion
+
         #region Properties
         public ObservableCollection<MenuItemViewModel> Menu { get; set; }
 
         public LoginViewModel NewLogin { get; set; }
+
+        public UserViewModel UserLoged { get; set; }
         #endregion
 
         #region Constructors
@@ -20,11 +29,25 @@ namespace ECommerceApp.ViewModels
         {
             Menu = new ObservableCollection<MenuItemViewModel>();
             NewLogin = new LoginViewModel();
+            UserLoged = new UserViewModel();
+
+            dataService = new DataService();
+
             LoadMenu();
+            LoadUser();
         }
+
+
         #endregion
 
         #region Methods
+
+        private void LoadUser()
+        {
+            var user  = dataService.GetUser();
+            UserLoged.FullName = user.FullName;
+            UserLoged.Photo = user.PhotoFullPath;
+        }
 
         private void LoadMenu()
         {
@@ -74,7 +97,7 @@ namespace ECommerceApp.ViewModels
             {
                 Icon = "ic_action_logout.png",
                 PageName = "LogutPage",
-                Title = "Salir"
+                Title = "Cerrar Sesion"
             });
         } 
         #endregion

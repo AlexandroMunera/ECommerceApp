@@ -1,7 +1,9 @@
-﻿using ECommerceApp.Services;
+﻿using ECommerceApp.Models;
+using ECommerceApp.Services;
 using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,16 +11,29 @@ using System.Windows.Input;
 
 namespace ECommerceApp.ViewModels
 {
-    public class LoginViewModel
+    public class LoginViewModel : INotifyPropertyChanged
     {
 
         #region Attributes
+
         private NavigationService navigationService;
 
         private DialogService dialogService;
 
+        private ApiService apiService;
+
+        private DataService dataService;
+
+        public bool isRunning { get; set; }
 
         #endregion
+
+        #region Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
         #region Properties
 
         public string User { get; set; }
@@ -27,18 +42,41 @@ namespace ECommerceApp.ViewModels
 
         public bool IsRemembered { get; set; }
 
+        public bool IsRunning
+        {
+            set
+            {
+                if (isRunning != value)
+                {
+                    isRunning = value;
+
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsRunning"));
+                }
+            }
+            get
+            {
+                return isRunning;
+            }
+        }
+
         #endregion
 
         #region Constructors
+
         public LoginViewModel()
         {
             navigationService = new NavigationService();
             dialogService = new DialogService();
+            apiService = new ApiService();
+            dataService = new DataService();
+
             IsRemembered = true; //Por defecto poner el recordar en true
         } 
+
         #endregion
 
         #region Commands
+
         public ICommand LoginCommand { get { return new RelayCommand(Login); } }
 
         private async void Login()
@@ -54,8 +92,26 @@ namespace ECommerceApp.ViewModels
                 await dialogService.ShowMessage("Error", "Debes ingresar una contraseña");
                 return;
             }
-            navigationService.SetMainPage();
+
+            IsRunning = true;
+            var response = await apiService.Login(User, Password);
+            IsRunning = false;
+
+            if (! response.IsSuccess)
+            {
+                await dialogService.ShowMessage("Error", response.Message);
+                return;
+            }
+
+            var user = (User)response.Result;
+
+            user.IsRemembered = IsRemembered;
+            user.Password = Password;
+
+            dataService.InsertUser(user);
+            navigationService.SetMainPage(user);
         } 
+
         #endregion
     }
 }
