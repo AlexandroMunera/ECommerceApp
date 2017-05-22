@@ -32,7 +32,7 @@
     <Entry
       Text="{Binding User, Mode=TwoWay}"
       Keyboard="Email"
-      Placeholder="Usuario"
+      Placeholder="Usuario d"
       TextColor="{StaticResource MainColor}">      
     </Entry>
     <Entry

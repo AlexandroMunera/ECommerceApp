@@ -5,7 +5,10 @@
              x:Class="ECommerceApp.App">
     <Application.Resources>
     <ResourceDictionary>
-      
+
+      <!-- Locator -->
+      <infra:InstanceLocator x:Key="Locator"></infra:InstanceLocator>
+
       <!-- General colors -->
       <Color x:Key="MainColor">#1b2b32</Color>
       <Color x:Key="FontColor">#1b2b32</Color>
@@ -14,8 +17,74 @@
       <Color x:Key="BackgroundColor">#e1e7e8</Color>
       <Color x:Key="AccentColor">#b22e2f</Color>
 
-      <!-- Locator -->
-      <infra:InstanceLocator x:Key="Locator"></infra:InstanceLocator>
+      <!--Data Templates-->
+      <DataTemplate x:Key="ProductItemTemplate">
+        <ViewCell>
+          <Grid Padding="8">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"></ColumnDefinition>
+              <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Image
+              Source="{Binding ImageFullPath}"
+              VerticalOptions="Start"
+              WidthRequest="100"
+              HeightRequest="100"/>
+            <StackLayout Grid.Column="1">
+              <Label
+                FontAttributes="Bold"
+                VerticalOptions="Center"
+                TextColor="{StaticResource FontColor}"
+                Text="{Binding Description}"/>
+              <Label
+                VerticalOptions="Center"
+                TextColor="{StaticResource FontColor}"
+                Text="{Binding Price, StringFormat='Precio: {0:C2}'}"/>
+              <Label
+                VerticalOptions="Center"
+                TextColor="{StaticResource FontColor}"
+                Text="{Binding Stock, StringFormat='Stock: {0:N2}'}"/>
+            </StackLayout>
+          </Grid>
+        </ViewCell>
+      </DataTemplate>
+
+      <DataTemplate x:Key="CustomerItemTemplate">
+        <ViewCell>
+          <Grid Padding="8">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"></ColumnDefinition>
+              <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Image
+              Source="{Binding PhotoFullPath}"
+              VerticalOptions="Start"
+              WidthRequest="100"
+              HeightRequest="100"/>
+            <StackLayout Grid.Column="1">
+              <Label
+                FontAttributes="Bold"
+                VerticalOptions="Center"
+                TextColor="{StaticResource FontColor}"
+                Text="{Binding FullName}"/>
+              <Label
+                VerticalOptions="Center"
+                TextColor="{StaticResource FontColor}"
+                Text="{Binding UserName, StringFormat='Email: {0}'}"/>
+              <Label
+                VerticalOptions="Center"
+                TextColor="{StaticResource FontColor}"
+                Text="{Binding Address, StringFormat='Direcció: {0}'}"/>
+              <Label
+                VerticalOptions="Center"
+                TextColor="{StaticResource FontColor}"
+                Text="{Binding Phone, StringFormat='Teléfono: {0}'}"/>
+            </StackLayout>
+          </Grid>
+        </ViewCell>
+      </DataTemplate>
+
+
 
     </ResourceDictionary>
   </Application.Resources>

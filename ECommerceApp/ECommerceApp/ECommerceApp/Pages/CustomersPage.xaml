@@ -5,6 +5,20 @@
              Title="Clientes"
              BackgroundColor="{StaticResource BackgroundColor}"
              BindingContext="{Binding Main, Source={StaticResource Locator}}">
-  
-  <Label Text="Customers Page" TextColor="{StaticResource FontColor}" VerticalOptions="Center" HorizontalOptions="Center" />
+
+  <StackLayout>
+
+    <SearchBar
+    Placeholder="Buscar..."
+    Text="{Binding CustomersFilter, Mode=TwoWay}"
+    SearchCommand="{Binding SearchCustomerCommand}">
+    </SearchBar>
+
+    <ListView
+    ItemTemplate="{StaticResource CustomerItemTemplate}"
+    ItemsSource="{Binding Customer}"
+    HasUnevenRows="True">
+    </ListView>
+
+  </StackLayout>
 </ContentPage>

@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System;
+using System.ComponentModel;
 
 namespace ECommerceApp.ViewModels
 {
-    public class MainViewModel
+    public class MainViewModel : INotifyPropertyChanged
     {
         #region Singleton
 
@@ -34,6 +35,15 @@ namespace ECommerceApp.ViewModels
 
         private NetServices netService;
 
+        private string productsFilter;
+
+
+        #endregion
+
+        #region Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region Properties
@@ -46,7 +56,31 @@ namespace ECommerceApp.ViewModels
 
         public UserViewModel UserLoged { get; set; }
 
-        public string Filter { get; set; }
+        public string ProductsFilter
+        {
+            set
+            {
+                if (productsFilter != value)
+                {
+                    productsFilter = value;
+
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("ProductsFilter"));
+                    }
+
+                    if (string.IsNullOrEmpty(productsFilter))
+                    {
+                        LoadLocalProducts();
+                    }
+                }
+            }
+            get
+            {
+                return productsFilter;
+            }
+        }
+        
         #endregion
 
         #region Constructors
@@ -83,7 +117,7 @@ namespace ECommerceApp.ViewModels
 
         private void SearchProduct()
         {
-            var products = dataService.GetProducts(Filter);
+            var products = dataService.GetProducts(ProductsFilter);
                        
             Products.Clear();
             foreach (var product in products)
@@ -186,6 +220,13 @@ namespace ECommerceApp.ViewModels
                 products = dataService.GetProducts();
             }
 
+            ReloadProducts(products);
+
+
+        }
+
+        private void ReloadProducts(List<Product> products)
+        {
             Products.Clear();
 
             foreach (var p in products)
@@ -208,6 +249,12 @@ namespace ECommerceApp.ViewModels
                     TaxId = p.TaxId
                 });
             }
+        }
+
+        private void LoadLocalProducts()
+        {
+            var products = dataService.GetProducts();
+            ReloadProducts(products);
         }
 
         #endregion
