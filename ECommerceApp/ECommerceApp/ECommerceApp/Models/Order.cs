@@ -19,7 +19,7 @@ namespace ECommerceApp.Models
         public string Remarks { get; set; }
 
         [ManyToOne]
-        public Customer Customer { get; set; }
+        public Product Customer { get; set; }
 
         public override int GetHashCode()
         {

@@ -37,6 +37,9 @@ namespace ECommerceApp.ViewModels
 
         private string productsFilter;
 
+        private string customersFilter;
+
+
 
         #endregion
 
@@ -51,6 +54,7 @@ namespace ECommerceApp.ViewModels
 
         public ObservableCollection<ProductItemViewModel> Products { get; set; }
 
+        public ObservableCollection<CustomerItemViewModel> Customers { get; set; }
 
         public LoginViewModel NewLogin { get; set; }
 
@@ -80,7 +84,35 @@ namespace ECommerceApp.ViewModels
                 return productsFilter;
             }
         }
-        
+
+        public string CustomersFilter
+        {
+            set
+            {
+                if (customersFilter != value)
+                {
+                    customersFilter = value;
+
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("CustomersFilter"));
+                    }
+
+                    if (string.IsNullOrEmpty(customersFilter))
+                    {
+                        LoadLocalCustomers();
+                    }
+                }
+            }
+            get
+            {
+                return customersFilter;
+            }
+        }
+
+       
+
+
         #endregion
 
         #region Constructors
@@ -92,6 +124,7 @@ namespace ECommerceApp.ViewModels
             //Create observable collections
             Menu = new ObservableCollection<MenuItemViewModel>();
             Products = new ObservableCollection<ProductItemViewModel>();
+            Customers = new ObservableCollection<CustomerItemViewModel>();
 
             //Create views
             NewLogin = new LoginViewModel();
@@ -105,8 +138,9 @@ namespace ECommerceApp.ViewModels
             //Load data
             LoadMenu();
             LoadProducts();
+            LoadCustomers();
             
-        }
+        }       
 
 
         #endregion
@@ -118,30 +152,18 @@ namespace ECommerceApp.ViewModels
         private void SearchProduct()
         {
             var products = dataService.GetProducts(ProductsFilter);
-                       
-            Products.Clear();
-            foreach (var product in products)
-            {
-                Products.Add(new ProductItemViewModel
-                {
-                    BarCode = product.BarCode,
-                    Category = product.Category,
-                    CategoryId = product.CategoryId,
-                    Company = product.Company,
-                    CompanyId = product.CompanyId,
-                    Description = product.Description,
-                    Image = product.Image,
-                    Inventories = product.Inventories,
-                    Price = product.Price,
-                    ProductId = product.ProductId,
-                    Remarks = product.Remarks,
-                    Stock = product.Stock,
-                    Tax = product.Tax,
-                    TaxId = product.TaxId,
-                });
-            }
+            ReloadProducts(products);           
 
         }
+
+        public ICommand SearchCustomerCommand { get { return new RelayCommand(SearchCustomer); } }
+
+        private void SearchCustomer()
+        {
+            var customers = dataService.GetCustomers(CustomersFilter);
+            ReloadCustomers(customers);
+        }
+
 
         #endregion
 
@@ -221,8 +243,6 @@ namespace ECommerceApp.ViewModels
             }
 
             ReloadProducts(products);
-
-
         }
 
         private void ReloadProducts(List<Product> products)
@@ -255,6 +275,58 @@ namespace ECommerceApp.ViewModels
         {
             var products = dataService.GetProducts();
             ReloadProducts(products);
+        }
+
+        private async void LoadCustomers()
+        {
+            var customers = new List<Customer>();
+
+            if (netService.IsConnected())
+            {
+                customers = await apiService.GetCustomers();
+                dataService.SaveCustomers(customers);
+            }
+            else
+            {
+                customers = dataService.GetCustomers();
+            }
+
+            ReloadCustomers(customers);
+        }
+
+        private void ReloadCustomers(List<Customer> customers)
+        {
+            Customers.Clear();
+
+            foreach (var c in customers)
+            {
+                Customers.Add(new CustomerItemViewModel
+                {
+                    Address = c.Address,
+                    City = c.City,
+                    CityId = c.CityId,
+                    CompanyCustomers = c.CompanyCustomers,
+                    CustomerId = c.CustomerId,
+                    Department = c.Department,
+                    DepartmentId = c.DepartmentId,
+                    FirstName = c.FirstName,
+                    IsUpdated = c.IsUpdated,
+                    LastName = c.LastName,
+                    Latitude = c.Latitude,
+                    Longitude = c.Longitude,
+                    Orders = c.Orders,
+                    Phone = c.Phone,
+                    Photo = c.Photo,
+                    Sales = c.Sales,
+                    UserName = c.UserName
+                });
+            }
+        }
+
+        private void LoadLocalCustomers()
+        {
+            var customers = dataService.GetCustomers();
+            ReloadCustomers(customers);
         }
 
         #endregion

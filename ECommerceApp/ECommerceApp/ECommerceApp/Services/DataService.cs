@@ -153,5 +153,41 @@ namespace ECommerceApp.Services
                 };
             }
         }
+               
+
+        public void SaveCustomers(List<Customer> customers)
+        {
+            using (var da = new DataAccess())
+            {
+                var oldCustomers = da.GetList<Customer>(false);
+
+                foreach (var customer in oldCustomers)
+                {
+                    da.Delete(customer);
+                }
+
+                foreach (var customer in customers)
+                {
+                    da.Insert(customer);
+                }
+            }
+        }
+
+        public  List<Customer> GetCustomers()
+        {
+            using (var da = new DataAccess())
+            {
+                return da.GetList<Customer>(true).OrderBy(p => p.FirstName).ThenBy(p => p.LastName).ToList();
+            }
+        }
+
+        public List<Customer> GetCustomers(string filter)
+        {
+            using (var da = new DataAccess())
+            {
+                return da.GetList<Customer>(true).OrderBy(p => p.FirstName).ThenBy(p=>p.LastName)
+                    .Where(p => p.FirstName.ToUpper().Contains(filter.ToUpper()) ||  p.LastName.ToUpper().Contains(filter.ToUpper())).ToList();
+            }
+        }
     }
 }

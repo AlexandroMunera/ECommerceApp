@@ -17,7 +17,7 @@ namespace ECommerceApp.Models
         public Department Department { get; set; }
 
         [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public List<Customer> Customers { get; set; }
+        public List<Product> Customers { get; set; }
 
         public override int GetHashCode()
         {

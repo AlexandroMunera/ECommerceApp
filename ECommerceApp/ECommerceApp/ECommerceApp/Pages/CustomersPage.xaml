@@ -16,7 +16,7 @@
 
     <ListView
     ItemTemplate="{StaticResource CustomerItemTemplate}"
-    ItemsSource="{Binding Customer}"
+    ItemsSource="{Binding Customers}"
     HasUnevenRows="True">
     </ListView>
 

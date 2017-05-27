@@ -25,7 +25,7 @@ namespace ECommerceApp.Data
             connection.CreateTable<City>();
             connection.CreateTable<Company>();
             connection.CreateTable<CompanyCustomer>();
-            connection.CreateTable<Customer>();
+            connection.CreateTable<Product>();
             connection.CreateTable<Department>();
             connection.CreateTable<Inventory>();
             connection.CreateTable<Order>();
