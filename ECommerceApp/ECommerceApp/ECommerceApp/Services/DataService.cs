@@ -75,23 +75,23 @@ namespace ECommerceApp.Services
             }
         }
 
-        public void SaveProducts(List<Product> products)
-        {
-            using(var da = new DataAccess())
-            {
-                var oldProducts = da.GetList<Product>(false);
+        //public void SaveProducts(List<Product> products)
+        //{
+        //    using(var da = new DataAccess())
+        //    {
+        //        var oldProducts = da.GetList<Product>(false);
 
-                foreach (var p in oldProducts)
-                {
-                    da.Delete(p);
-                }
+        //        foreach (var p in oldProducts)
+        //        {
+        //            da.Delete(p);
+        //        }
 
-                foreach (var product in products)
-                {
-                    da.Insert(product);
-                }
-            }
-        }
+        //        foreach (var product in products)
+        //        {
+        //            da.Insert(product);
+        //        }
+        //    }
+        //}
 
         public List<Product> GetProducts(string filter)
         {
@@ -101,13 +101,13 @@ namespace ECommerceApp.Services
             }
         }
 
-        public List<Product> GetProducts()
-        {
-            using(var da = new DataAccess())
-            {
-                return da.GetList<Product>(true).OrderBy(p => p.Description).ToList();
-            }
-        }
+        //public List<Product> GetProducts()
+        //{
+        //    using(var da = new DataAccess())
+        //    {
+        //        return da.GetList<Product>(true).OrderBy(p => p.Description).ToList();
+        //    }
+        //}
 
         public Response Login(string email, string password)
         {
@@ -155,29 +155,29 @@ namespace ECommerceApp.Services
         }
                
 
-        public void SaveCustomers(List<Customer> customers)
+        public void Save<T>(List<T> list) where T : class
         {
             using (var da = new DataAccess())
             {
-                var oldCustomers = da.GetList<Customer>(false);
+                var oldRecords = da.GetList<T>(false);
 
-                foreach (var customer in oldCustomers)
+                foreach (var record in oldRecords)
                 {
-                    da.Delete(customer);
+                    da.Delete(record);
                 }
 
-                foreach (var customer in customers)
+                foreach (var record in list)
                 {
-                    da.Insert(customer);
+                    da.Insert(record);
                 }
             }
         }
 
-        public  List<Customer> GetCustomers()
+        public List<T> Get<T>(bool witchChildren) where T : class
         {
             using (var da = new DataAccess())
             {
-                return da.GetList<Customer>(true).OrderBy(p => p.FirstName).ThenBy(p => p.LastName).ToList();
+                return da.GetList<T>(witchChildren).ToList();
             }
         }
 

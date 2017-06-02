@@ -4,7 +4,7 @@ using GalaSoft.MvvmLight.Command;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System;
+using System.Linq;
 using System.ComponentModel;
 
 namespace ECommerceApp.ViewModels
@@ -234,12 +234,12 @@ namespace ECommerceApp.ViewModels
 
             if (netService.IsConnected())
             {
-                products = await apiService.GetProducts();
-                dataService.SaveProducts(products);
+                products = await apiService.Get<Product>("Products");
+                dataService.Save(products);
             }
             else
             {
-                products = dataService.GetProducts();
+                products = dataService.Get<Product>(true);
             }
 
             ReloadProducts(products);
@@ -249,7 +249,7 @@ namespace ECommerceApp.ViewModels
         {
             Products.Clear();
 
-            foreach (var p in products)
+            foreach (var p in products.OrderBy(p => p.Description))
             {
                 Products.Add(new ProductItemViewModel
                 {
@@ -273,7 +273,7 @@ namespace ECommerceApp.ViewModels
 
         private void LoadLocalProducts()
         {
-            var products = dataService.GetProducts();
+            var products = dataService.Get<Product>(true);
             ReloadProducts(products);
         }
 
@@ -283,12 +283,12 @@ namespace ECommerceApp.ViewModels
 
             if (netService.IsConnected())
             {
-                customers = await apiService.GetCustomers();
-                dataService.SaveCustomers(customers);
+                customers = await apiService.Get<Customer>("Customers");
+                dataService.Save(customers);
             }
             else
             {
-                customers = dataService.GetCustomers();
+                customers = dataService.Get<Customer>(true);
             }
 
             ReloadCustomers(customers);
@@ -298,7 +298,7 @@ namespace ECommerceApp.ViewModels
         {
             Customers.Clear();
 
-            foreach (var c in customers)
+            foreach (var c in customers.OrderBy(p => p.FirstName).ThenBy(p => p.LastName))
             {
                 Customers.Add(new CustomerItemViewModel
                 {
@@ -325,7 +325,7 @@ namespace ECommerceApp.ViewModels
 
         private void LoadLocalCustomers()
         {
-            var customers = dataService.GetCustomers();
+            var customers = dataService.Get<Customer>(true);
             ReloadCustomers(customers);
         }
 
